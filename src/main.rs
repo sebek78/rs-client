@@ -13,17 +13,19 @@ async fn get_data() {
 
 #[tokio::main]
 async fn main() {
-    println!("Commands: [ quit, get ]");
+    loop {
+        println!("Commands: [ quit, get ]");
 
-    let mut command = String::new();
-    io::stdin()
-        .read_line(&mut command)
-        .expect("Failed to read line");
-    let cmd = command.trim();
+        let mut command = String::new();
+        io::stdin()
+            .read_line(&mut command)
+            .expect("Failed to read line");
+        let cmd = command.trim();
 
-    match cmd {
-        "quit" => println!("Q"),
-        "get" => get_data().await,
-        _ => println!("Unknown command: {}", command),
+        match cmd {
+            "quit" => break,
+            "get" => get_data().await,
+            _ => println!("Unknown command: {}", command),
+        }
     }
 }
