@@ -1,20 +1,14 @@
-use reqwest;
+mod api;
+mod auth;
+use crate::api::get_data;
+use crate::auth::login;
 use std::io;
-
-async fn get_data() {
-    let result = reqwest::get("http://localhost:3333/api")
-        .await
-        .unwrap()
-        .text()
-        .await;
-
-    println!("{:?}", result);
-}
 
 #[tokio::main]
 async fn main() {
     loop {
-        println!("Commands: [ quit, get ]");
+        // TODO: use crossterm = "0.23"
+        println!("Commands: [ quit, login, get ]");
 
         let mut command = String::new();
         io::stdin()
@@ -24,6 +18,7 @@ async fn main() {
 
         match cmd {
             "quit" => break,
+            "login" => login(),
             "get" => get_data().await,
             _ => println!("Unknown command: {}", command),
         }
