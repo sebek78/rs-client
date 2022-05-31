@@ -7,7 +7,6 @@ use std::io;
 #[tokio::main]
 async fn main() {
     loop {
-        // TODO: use crossterm = "0.23"
         println!("Commands: [ quit, login, get ]");
 
         let mut command = String::new();
@@ -18,7 +17,7 @@ async fn main() {
 
         match cmd {
             "quit" => break,
-            "login" => login(),
+            "login" => login().await,
             "get" => get_data().await,
             _ => println!("Unknown command: {}", command),
         }
