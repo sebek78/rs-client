@@ -1,3 +1,4 @@
+use reqwest::Client;
 use rpassword;
 use serde::{Deserialize, Serialize};
 use std::io::{self, Write};
@@ -20,7 +21,12 @@ struct UserDto {
     user: User,
 }
 
-pub async fn login() {
+#[derive(Debug, Serialize, Deserialize)]
+struct LogoutDto {
+    success: bool,
+}
+
+pub async fn login(client: &Client) {
     print!("Login: ");
     io::stdout().flush().unwrap();
 
@@ -37,11 +43,6 @@ pub async fn login() {
         password: password.into(),
     };
 
-    let client = reqwest::Client::builder()
-        .cookie_store(true)
-        .build()
-        .unwrap();
-
     let response = client
         .post("http://localhost:3333/api/auth/login")
         .json(&data)
@@ -49,22 +50,17 @@ pub async fn login() {
         .await
         .expect("send login data");
 
-    //let cookies = response.headers().get_all("set-cookie");
-    //let mut iter = cookies.iter();
-    // println!("Cookie Authentication {:?}", iter.next());
-    // println!("Cookie Refresh {:?}", iter.next());
-
     let user_dto = response.json::<UserDto>().await.unwrap();
     println!("{:#?}", user_dto.user.username);
+}
 
-    let result = client
-        .get("http://localhost:3333/api")
+pub async fn logout(client: &Client) {
+    let response = client
+        .post("http://localhost:3333/api/auth/logout")
         .send()
         .await
-        .unwrap()
-        .text()
-        .await
-        .unwrap();
+        .expect("send login data");
 
-    println!("{:?}", result);
+    let data_dto = response.json::<LogoutDto>().await.unwrap();
+    println!("{:#?}", data_dto.success);
 }

@@ -1,13 +1,16 @@
 mod api;
 mod auth;
 use crate::api::get_data;
-use crate::auth::login;
+use crate::auth::{login, logout};
+use reqwest::Client;
 use std::io;
 
 #[tokio::main]
 async fn main() {
+    let client = Client::builder().cookie_store(true).build().unwrap();
+
     loop {
-        println!("Commands: [ quit, login, get ]");
+        println!("Commands: [ quit, login, get, logout ]");
 
         let mut command = String::new();
         io::stdin()
@@ -17,8 +20,9 @@ async fn main() {
 
         match cmd {
             "quit" => break,
-            "login" => login().await,
-            "get" => get_data().await,
+            "login" => login(&client).await,
+            "get" => get_data(&client).await,
+            "logout" => logout(&client).await,
             _ => println!("Unknown command: {}", command),
         }
     }

@@ -1,11 +1,14 @@
-use reqwest;
+use reqwest::Client;
 
-pub async fn get_data() {
-    let result = reqwest::get("http://localhost:3333/api")
+pub async fn get_data(client: &Client) {
+    let result = client
+        .get("http://localhost:3333/api")
+        .send()
         .await
         .unwrap()
         .text()
-        .await;
+        .await
+        .unwrap();
 
     println!("{:?}", result);
 }
